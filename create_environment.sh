@@ -1,57 +1,123 @@
 #!/bin/bash
-# create the main directory
-mkdir -p submission_reminder_Julia/{app,config,modules,assets}
 
-touch submission_reminder_Julia/config/config.env
-touch submission_reminder_Julia/app/reminder.sh && chmod u+x submission_reminder_Julia/app/reminder.sh
-touch submission_reminder_Julia/modules/functions.sh && chmod u+x submission_reminder_Julia/modules/functions.sh
-touch submission_reminder_Julia/startup.sh && chmod u+x submission_reminder_Julia/startup.sh
-touch submission_reminder_Julia/assets/submissions.txt
-echo 'student, assignment, submission status
-here, Shell Navigation, submitted
-Ange, Shell Navigation, not submitted
-Gabriella, Shell Navigation, not submitted
-Aaliyah, Shell Navigation, not submitted
-Keza, Shell Navigation, submitted
-Reine, Shell Navigation, not submitted
-Tessy, Shell Navigation, submitted' > submission_reminder_Julia/assets/submissions.txt
-echo '# This is the config file
-ASSIGNMENT="Shell Navigation"
-DAYS_REMAINING=2' > submission_reminder_Julia/config/config.env
-echo '#!/bin/bash
+# Ask the user for their name
+read -p "Enter your name: " userName
+# Define main directory
+mainDir="submission_reminder_${userName}"
 
-# Function to read submissions file and output students who have not submitted
-function check_submissions {
-    local submissions_file=$1
-    echo "Checking submissions in $submissions_file"
+# Create main directory
+mkdir -p "$mainDir/scripts" "$mainDir/config" "$mainDir/data"
+# Create required files
+touch "$mainDir/scripts/reminder.sh"
+touch "$mainDir/scripts/functions.sh"
+touch "$mainDir/scripts/startup.sh"
+touch "$mainDir/config/config.env"
+touch "$mainDir/data/submissions.txt"
+# Populate config.env
+cat <<EOL > "$mainDir/config/config.env"
+# Configuration file for Submission Reminder App
+APP_NAME="Submission Reminder App"
+NOTIFICATION_INTERVAL="10m"
+EOL
+# Populate reminder.sh
+cat <<EOL > "$mainDir/scripts/reminder.sh"
+#!/bin/bash
+source "\$(dirname "\$0")/functions.sh"
+echo "Running reminder script..."
+notify_users
+EOL
+chmod +x "$mainDir/scripts/reminder.sh"  # Make it executable
+# Populate functions.sh
+cat <<EOL > "$mainDir/scripts/functions.sh"
+#!/bin/bash
+function notify_users() {
+  echo "Sending reminder notifications..."
+}
+EOL
+chmod +x "$mainDir/scripts/functions.sh"  # Make it executable
+# Populate submissions.txt with sample data
+cat <<EOL > "$mainDir/data/submissions.txt"
+# Student Submission Records
+mukire serge, 2025-02-20
+ganza fidel, 2025-02-21
+keza gentille, 2025-02-22
+charmante rubibi, 2025-02-23
+tonny bleir, 2025-02-24
+Mikah jai, 2025-02-25
+Millan jessy, 2025-02-26
+Morgan jessy, 2025-02-27
+skyla zerah, 2025-02-28
+EOL
+# Implement startup.sh
+cat <<EOL > "$mainDir/scripts/startup.sh"
+#!/bin/bash
+echo "Starting Submission Reminder App..."
+bash "\$(dirname "\$0")/reminder.sh"
+EOL
+chmod +x "$mainDir/scripts/startup.sh"  # Make it executable
+echo "Environment setup complete!"#!/bin/bash
 
-    # Skip the header and iterate through the lines
-    while IFS=, read -r student assignment status; do
-        # Remove leading and trailing whitespace
-        student=$(echo "$student" | xargs)
-        assignment=$(echo "$assignment" | xargs)
-        status=$(echo "$status" | xargs)
-	# Check if assignment matches and status is 'not submitted'
-        if [[ "$assignment" == "$ASSIGNMENT" && "$status" == "not submitted" ]]; then
-            echo "Reminder: $student has not submitted the $ASSIGNMENT assignment!"
-        fi
-    done < <(tail -n +2 "$submissions_file") # Skip the header
-}' > submission_reminder_Julia/modules/functions.sh
-echo '#!/bin/bash
+# Ask the user for their name
+read -p "Enter your name: " userName
 
-# Source environment variables and helper functions
-source ./config/config.env
-source ./modules/functions.sh
+# Define main directory
+mainDir="submission_reminder_${userName}"
 
-# Path to the submissions file
-submissions_file="./assets/submissions.txt"
-# Print remaining time and run the reminder function
-echo "Assignment: $ASSIGNMENT"
-echo "Days remaining to submit: $DAYS_REMAINING days"
-echo "--------------------------------------------"
+# Create main directory
+mkdir -p "$mainDir/scripts" "$mainDir/config" "$mainDir/data"
 
-check_submissions $submissions_file' > submission_reminder_Julia/app/reminder.sh
-echo '#!/bin/bash
- ./submission_reminder_Julia/app/reminder.sh' > submission_reminder_Julia/startup.sh
+# Create required files
+touch "$mainDir/scripts/reminder.sh"
+touch "$mainDir/scripts/functions.sh"
+touch "$mainDir/scripts/startup.sh"
+touch "$mainDir/config/config.env"
+touch "$mainDir/data/submissions.txt"
 
- ./submission_reminder_Julia/startup.sh
+# Populate config.env
+cat <<EOL > "$mainDir/config/config.env"
+# Configuration file for Submission Reminder App
+APP_NAME="Submission Reminder App"
+NOTIFICATION_INTERVAL="10m"
+EOL
+
+# Populate reminder.sh
+cat <<EOL > "$mainDir/scripts/reminder.sh"
+#!/bin/bash
+source "\$(dirname "\$0")/functions.sh"
+echo "Running reminder script..."
+notify_users
+EOL
+chmod +x "$mainDir/scripts/reminder.sh"
+
+# Populate functions.sh
+cat <<EOL > "$mainDir/scripts/functions.sh"
+#!/bin/bash
+function notify_users() {
+  echo "Sending reminder notifications..."
+}
+EOL
+chmod +x "$mainDir/scripts/functions.sh"
+
+# Populate submissions.txt with sample data
+cat <<EOL > "$mainDir/data/submissions.txt"
+# Student Submission Records
+mukire serge, 2025-02-20
+ganza fidel, 2025-02-21
+keza gentille, 2025-02-22
+charmante rubibi, 2025-02-23
+tonny bleir, 2025-02-24
+Mikah jai, 2025-02-25
+Millan jessy, 2025-02-26
+Morgan jessy, 2025-02-27
+skyla zerah, 2025-02-28
+EOL
+
+# Implement startup.sh
+cat <<EOL > "$mainDir/scripts/startup.sh"
+#!/bin/bash
+echo "Starting Submission Reminder App..."
+bash "\$(dirname "\$0")/reminder.sh"
+EOL
+chmod +x "$mainDir/scripts/startup.sh"
+
+echo "Environment setup complete!"
