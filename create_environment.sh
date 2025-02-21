@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Prevent script from running multiple times simultaneously
+if pgrep -f "$(basename "$0")" > /dev/null; then
+    echo "⚠️ Script is already running. Exiting..."
+    exit 1
+fi
 # Ask the user for their name
 read -p "Enter your name: " userName
 # Define main directory
